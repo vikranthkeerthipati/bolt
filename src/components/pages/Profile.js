@@ -13,7 +13,7 @@ export default function Profile(props) {
         let user = firebase.auth().currentUser;
         let userId = user.uid;
         setEmail(user.email)
-        firebase.database().ref('users/' + userId).get()
+        firebase.database().ref('users/' + user.email.replace(".","~")).get()
             .then((response) => {
                 let attr = response.val()
                 setFirstName(attr.first_name)

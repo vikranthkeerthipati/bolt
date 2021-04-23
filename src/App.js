@@ -65,7 +65,7 @@ function App() {
       <Route path='/signin' render={(props) => (<SignIn {...props} loggedIn={loggedIn}/>)} />
       <Route path="/signup" render={(props) => (<SignUp {...props} loggedIn={loggedIn}/>)} />
       <Route path="/signup" render={(props) => (<SignUp {...props} loggedIn={loggedIn}/>)} />
-      <Route path="/leaderboard" render={(props) => (<Leaderboard {...props} loggedIn={loggedIn}/>)} />
+      <Route path="/leaderboard" render={(props) => (<Leaderboard {...props} loggedIn={loggedIn} checkedUser={checkedUser}/>)} />
       <Route path="/myfriends" render={(props) => (<MyFriends {...props} loggedIn={loggedIn} userId={email}/>)} />
       <Route path="/myworkouts" render={(props) => (<MyWorkouts {...props} loggedIn={loggedIn} userId={email} checkedUser={checkedUser} load={loadingSwitch}/>)} />
       <Route path="/logworkout" render={(props) => (<LogWorkout {...props} loggedIn={loggedIn} userId={email} checkedUser={checkedUser}/>)} />

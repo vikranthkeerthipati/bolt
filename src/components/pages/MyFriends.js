@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react"
-import { Form, Jumbotron, Button, Row, Col, Container, Card} from "react-bootstrap";
+import { Form, Jumbotron, Button, Row, Col, Container, Card, ListGroup} from "react-bootstrap";
 import firebase from "../../firebase.js"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {faTimesCircle, faCheckCircle} from "@fortawesome/free-regular-svg-icons"
@@ -20,52 +20,74 @@ export default function MyFriends(props) {
         })
     },[])
 
-    let mapInvites = () => {
-        if(Object.keys(friends).length > 0) {
-            if(Object.keys(friends[props.userId]["friends"]).length == 1) {
-                return (
-                    <>
-                    {[friends[props.userId]["friends"]].map((friend, id) => {
-                        console.log(friend[Object.keys(friend)[0]][0])
-                        console.log(friend[Object.keys(friend)[0]][1])
-                        if(!friend[Object.keys(friend)[0]][0] && friend[Object.keys(friend)[0]][1] == 1)
-                        return(
-                        <Card body>
-                                        <Row>
-                            <Col sm = {10}>
-                            <div>
-                                <a>
-                                    {friends[Object.keys(friend)[0]].first_name} {friends[Object.keys(friend)[0]].last_name}
-                                    </a>
-                                    </div>
-                                    </Col>
-                                    
-                        <Col sm = {1}>
-<FontAwesomeIcon icon={faTimesCircle} />
-                        </Col>
-                        <Col sm = {1}>
-                        <FontAwesomeIcon icon={faCheckCircle} />
-                        </Col>
-                                    
-                        </Row>
-    
-                        </Card>
 
-                        )
-                    })}
-    
+    let acceptFriend = (e, friend) => {
+        e.preventDefault()
+        console.log(friend)
+
+    } 
+
+    let friendsMap = () => {
+        if(Object.keys(friends).length > 0) {
+            
+        }
+        else {
+            return(
+                <>
+                <ListGroup.Item>Test</ListGroup.Item>
+                </>
+            )
+        }
+    }
+    let mapInvites = () => {
+        if(friends[props.userId] != null && Object.keys(friends).length > 0) {
+            console.log("no exist")
+            if(friends[props.userId]["friends"] == null || friends == null) {
+                return(
+                    <>
+                    <Card body>
+                        <a>No Invites Found.</a>
+                    </Card>
                     </>
                 )
             }
             else {
+                console.log("multiple")
+                console.log(friends[props.userId]["friends"])
+                let iterator = []
+                Object.keys(friends[props.userId]["friends"]).forEach((friendName) => {
+                    iterator.push(friendName)
+                })
+
                 return (
                     <>
-                    {friends[props.userId]["friends"].map((friend, id) => {
-                        <h1>Mom</h1>
-                    })}
-    
+                    {iterator.map((friendName) => {
+                        if(friends[props.userId]["friends"][friendName])
+                                                        <Card body>
+                                                        <Row>
+                                            <Col sm = {10}>
+                                            <div>
+                                                <a>
+                                    {friends[friendName].first_name} {friends[friendName].last_name}
+                                    </a>
+                                                    </div>
+                                                    </Col>
+                                    {friends[props.userId]["friends"][friendName][0] == 1 ? 
+                                    <>
+                                        <Col sm = {1}>
+                <FontAwesomeIcon style={{cursor: "pointer"}} icon={faTimesCircle} />
+                                        </Col>
+                                        <Col sm = {1}>
+                                        <FontAwesomeIcon style={{cursor: "pointer"}} icon={faCheckCircle} onClick={(e) => acceptFriend(e, friendName)}/>
+                                        </Col>
+                                        </>
+                    : <Col sm={2}><a>Sent!</a></Col>}  
+                                        </Row>
+                                                </Card>
+            })}
                     </>
                 )
+
             }
         }
         else {
@@ -83,10 +105,16 @@ export default function MyFriends(props) {
             let friendEmailParsed = friendEmail.replace(".","~")
             let myMail
             if(Object.keys(attr).includes(friendEmailParsed)) {
-                let myData = {}
+                let myData = friends[props.userId]["friends"]
+                if(myData == null) {
+                    myData = {}
+                }
                 myData[friendEmailParsed] = [false, 0] 
                 console.log(props.userId)
-                let friendData = {}
+                let friendData = friends[friendEmailParsed]["friends"]
+                if(friendData == null) { 
+                    friendData = {}
+                }
                 friendData[props.userId] = [false, 1]
                 
                 firebase.database().ref("users/"+props.userId+"/friends").set(
@@ -107,8 +135,15 @@ export default function MyFriends(props) {
 
     return (
         <Jumbotron>
-                    <Row>
-                    <Col sm ={4}>
+            <Row>
+                <Col sm = {4}>
+                    <h1>Your Friends</h1>
+                    <ListGroup>
+                        {friendsMap()}
+                    </ListGroup>
+                </Col>
+                <Col sm = {2} />
+                <Col sm ={4}>
         <h1>Add Friends</h1>
         <Form>
 
@@ -121,8 +156,11 @@ export default function MyFriends(props) {
         </Button>
         </Form>
         </Col>
-        <Col sm = {2} />
-        <Col sm ={4}>
+            </Row>
+                    <Row>
+
+        <Col sm = {6} />
+        <Col sm ={4} className="mt-2">
             <h1>Pending Invites</h1>
         <div style={{maxHeight:"50vh"}}>
         {mapInvites()}

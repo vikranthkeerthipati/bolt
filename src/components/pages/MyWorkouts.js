@@ -37,7 +37,6 @@ const columns = [{
     order: 'desc'
   }];
 
-  const products = [{"timestamp":0, "name": "Test", "price":"$1.23"},{"timestamp":1, "name": "Dad", "price":"2.23"}]
   
 
 export default function MyWorkouts(props) {
